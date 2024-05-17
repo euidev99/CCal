@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49297692404",
+    "project_id": "calcalcal-6c20c",
+    "storage_bucket": "calcalcal-6c20c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49297692404:android:89c339f6f6adcf8953f0a1",
+        "android_client_info": {
+          "package_name": "com.capstone.ccal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGPecGXBgNeS3zYHk5Wa3ciQhPU4CEoHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
