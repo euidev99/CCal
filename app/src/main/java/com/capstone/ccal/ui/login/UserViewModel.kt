@@ -17,6 +17,11 @@ import com.capstone.ccal.common.RepoResult
 import com.capstone.ccal.common.UserRepository
 import com.capstone.ccal.model.UserDto
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class UserViewModel : ViewModel() {
@@ -66,15 +71,15 @@ class UserViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     // 로그인 성공
                     val user = mAuth.currentUser
-                    val userRepository = BaseRepository(AppConst.FIREBASE.USER_INFO, UserDto::class.java)
+                    val userRepository =
+                        BaseRepository(AppConst.FIREBASE.USER_INFO, UserDto::class.java)
                     viewModelScope.launch {
                         when (val result = userRepository.getDocumentsByField("email", email)) {
                             is RepoResult.Success -> {
                                 val dataList = result.data
                                 if (dataList.isEmpty()) {
                                     _loginResult.postValue(false)
-                                    _stringResult.value = LoginResult.FAILED.message
-                                    _messageState.value = true
+                                    setErrorMessage(LoginResult.FAILED.message)
                                     Log.d("login", "fail no user $result")
                                     return@launch
                                 }
@@ -82,41 +87,62 @@ class UserViewModel : ViewModel() {
                                 if (dataList[0].password == passwd) {
                                     //Login Success
                                     //간소화 처리
-                                    UserRepository.saveEmail(CalApplication.ApplicationContext(), dataList[0].email)
-                                    UserRepository.saveUsername(CalApplication.ApplicationContext(), dataList[0].name)
+                                    UserRepository.saveEmail(
+                                        CalApplication.ApplicationContext(),
+                                        dataList[0].email
+                                    )
+                                    UserRepository.saveUsername(
+                                        CalApplication.ApplicationContext(),
+                                        dataList[0].name
+                                    )
 
                                     Log.d("login", "success $result")
                                     _loginResult.postValue(true)
-
+                                    setErrorMessage(LoginResult.SUCCESS.message)
                                 } else {
                                     Log.d("seki", "Password Error $result")
-                                    _stringResult.value = LoginResult.FAILED.message
-                                    _messageState.value = true
                                     _loginResult.postValue(false)
+                                    setErrorMessage(LoginResult.FAILED.message)
                                 }
                             }
+
                             is RepoResult.Error -> {
                                 //Error
                                 _loginResult.postValue(false)
-                                _stringResult.value = LoginResult.ERROR_COMMON.message
-                                _messageState.value = true
+                                setErrorMessage(LoginResult.ERROR_COMMON.message)
                                 Log.d("seki", result.exception.toString())
                             }
                         }
-
-                        _loadingProgressState.postValue(false)
                     }
                 } else {
                     // 로그인 실패
-                    _loginResult.postValue(false)
-                    _messageState.value = true
-                    _stringResult.value = LoginResult.ERROR_COMMON.message
                     Log.d("seki", "실패 : " + task.exception.toString())
-                    _loadingProgressState.postValue(false)
+
+                    _loginResult.postValue(false)
+                    viewModelScope.launch {
+                        setErrorMessage(LoginResult.ERROR_COMMON.message)
+                    }
                 }
             }
     }
 
+    private val supervisorJob = SupervisorJob()
+
+    private suspend fun setErrorMessage(message: String) {
+        _loadingProgressState.postValue(false)
+        val coroutineScope = CoroutineScope(supervisorJob + Dispatchers.Default)
+
+        // 이전에 실행 중인 작업이 있다면 취소합니다.
+        coroutineScope.coroutineContext.cancelChildren()
+
+        coroutineScope.launch {
+            _messageState.value = true
+            _stringResult.value = message
+            delay(3000)
+            _messageState.value = false
+            _stringResult.value = ""
+        }
+    }
 
     companion object {
         fun provideFactory(

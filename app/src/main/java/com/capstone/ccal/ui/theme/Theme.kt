@@ -17,17 +17,25 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Color.Black,
+    secondary = Color.White,
+    tertiary = Color.Black,
+    onBackground = Black45,
+    background = Black45.copy(alpha = 0.6f),
+    surface = Color.Black,
+    onSurface = Black40,
+    onSecondaryContainer = Black40
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = DeepSkyBlue,
-    secondary = Color.White,
+    primary = Color.White,
+    secondary = Color.Black,
     tertiary = Color.White,
-    onBackground = Color.White,
-    background = Color.White
+    onBackground = PastelGreen,
+    background = PastelGreen.copy(alpha = 0.6f),
+    surface = Color.White,
+    onSurface = PastelGreenLight,
+    onSecondaryContainer = PastelGreenLight
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
@@ -36,6 +44,7 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
+
     */
 )
 
@@ -65,7 +74,7 @@ fun CCalTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = LightColorScheme,
         typography = Typography,
         content = content
     )

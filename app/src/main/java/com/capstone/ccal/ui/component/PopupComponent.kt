@@ -24,8 +24,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.capstone.ccal.ui.theme.customFont
 import kotlinx.coroutines.delay
 
 @Composable
@@ -90,23 +93,27 @@ fun AlertSnackBar(
     errorOn: Boolean
 ) {
     // errorOn을 상태로 관리합니다.
-    var currentErrorOn by remember { mutableStateOf(errorOn) }
-
+//    var currentErrorOn by remember { mutableStateOf(errorOn) }
 
     // errorOn이 true인 동안에는 스낵바를 표시합니다.
-    if (currentErrorOn) {
+//    if (currentErrorOn) {
         LaunchedEffect(Unit) {
             // 3초 후에 errorOn을 false로 설정하여 스낵바를 종료합니다.
-            delay(3000)
-            currentErrorOn = false
+//            delay(3000)
+//            currentErrorOn = false
 
         }
         Snackbar(
             modifier = modifier,
             content = {
-                Text(text)
+                Text(
+                    text = text,
+                    fontFamily = customFont,
+                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Normal,
+                )
             }
         )
-    }
+//    }
 }
 

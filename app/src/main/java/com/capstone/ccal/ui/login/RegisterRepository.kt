@@ -159,6 +159,25 @@ class RegisterRepository {
         }
     }
 
+
+    // updatePhone 함수 정의
+    suspend fun updateUserInfo( //email as document Id
+                               email: String,
+                               newPhone: String,
+                               newAddress: String,
+                               newAddressNumber: String
+    ): RepoResult<Unit> {
+        val userRepository = BaseRepository(AppConst.FIREBASE.USER_INFO, UserDto::class.java)
+
+        val updates = mapOf(
+            "phone" to newPhone,
+            "address" to newAddress,
+            "addressNumber" to newAddressNumber
+        )
+
+        return userRepository.updateDocument(email, updates)
+    }
+
     //계정에 사용자 등록 후, 성공시 정보를 DB 에 추가로 저장하도록 함
     //만약 실패시, 그냥 다 실패로 하고 리트라이를 시도하는 것으로 예외처리하지 않음.
     suspend fun register(email: String, name: String, password: String, imageUri: Uri?) {

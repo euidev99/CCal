@@ -7,10 +7,11 @@ plugins {
 android {
     namespace = "com.capstone.ccal"
     compileSdk = 34
+//    ndkVersion = "23.1.7779620"
 
     defaultConfig {
         applicationId = "com.capstone.ccal"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -80,6 +81,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.3")
 
     implementation("com.github.skydoves:landscapist-glide:1.4.7")
+    implementation("io.coil-kt:coil-compose:2.1.0")
 
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
@@ -88,7 +90,7 @@ dependencies {
 
 //    // Unity 라이브러리 의존성 추가
 //    implementation(project(":unityLibrary"))
-//    // Unity 라이브러리의 JAR 파일 의존성 추가
+////    // Unity 라이브러리의 JAR 파일 의존성 추가
 //    implementation(fileTree(
 //        mapOf(
 //            "dir" to "${rootProject.projectDir}/unityLibrary/libs",
@@ -96,5 +98,4 @@ dependencies {
 //        )
 //    ))
 //    implementation(project(":unityLibrary:xrmanifest.androidlib"))
-
 }

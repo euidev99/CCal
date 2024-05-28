@@ -51,6 +51,8 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,6 +65,8 @@ import com.capstone.ccal.R
 import com.capstone.ccal.ui.component.MyHorizontalDivider
 import com.capstone.ccal.ui.mypage.MyPageTab
 import com.capstone.ccal.ui.search.SearchTab
+import com.capstone.ccal.ui.theme.PastelGreen
+import com.capstone.ccal.ui.theme.customFont
 import java.util.Locale
 
 enum class HomeSections(
@@ -141,7 +145,7 @@ fun MainBottomBar(
     tabs: Array<HomeSections>,
     currentRoute: String,
     navigateToRoute: (String) -> Unit,
-    color: Color = MaterialTheme.colorScheme.primary,
+    color: Color = MaterialTheme.colorScheme.onBackground,
     contentColor: Color = MaterialTheme.colorScheme.secondary,
 ) {
     val routes = remember { tabs.map {  { it.route} }}
@@ -174,9 +178,9 @@ fun MainBottomBar(
                 val selected = section == currentSection
                 val tint by animateColorAsState(
                     if (selected) {
-                        Color.White
+                        MaterialTheme.colorScheme.primary
                     } else {
-                        Color.Gray
+                        Color.LightGray
                     }, label = ""
                 )
 
@@ -193,7 +197,9 @@ fun MainBottomBar(
                         Text(
                             text = text,
                             color = tint,
-                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = customFont,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
                             maxLines = 1
                         )
                     },

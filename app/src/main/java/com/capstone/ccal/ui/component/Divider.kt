@@ -17,11 +17,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.capstone.ccal.ui.theme.DeepSkyBlue
 import com.capstone.ccal.ui.theme.ForestGreen
 import com.capstone.ccal.ui.theme.Gold
 import com.capstone.ccal.ui.theme.GoldSand
 import com.capstone.ccal.ui.theme.OliveGreen
 import com.capstone.ccal.ui.theme.OliveSatin
+import com.capstone.ccal.ui.theme.PastelGreen
+import com.capstone.ccal.ui.theme.PastelGreenLight
+import com.capstone.ccal.ui.theme.RoyalBlue
 import com.capstone.ccal.ui.theme.SandGreen
 import java.util.Random
 
@@ -32,7 +36,7 @@ import java.util.Random
 @Composable
 fun DotHorizontalDivider(
     index : Int = 0,
-    height :Dp = 75.dp,
+    height :Dp = 2.dp,
     modifier : Modifier = Modifier,
 ) {
 
@@ -43,23 +47,25 @@ fun DotHorizontalDivider(
             .fillMaxWidth()
             .height(height)
             .background(
-                if (index % 3 == 0) Gold
-                else if (index % 3 == 1) SandGreen
-                else if (index % 3 == 2) Color.Red
-                else GoldSand
+                PastelGreenLight
+//                if (index % 3 == 0) Gold
+//                else if (index % 3 == 1) SandGreen
+//                else if (index % 3 == 2) D
+//                else GoldSand
             )
-            .drawBehind {
-                repeat(30) {
-                    val x = Random()
-                        .nextInt(size.width.toInt())
-                        .toFloat()
-                    val y = Random()
-                        .nextInt(size.height.toInt())
-                        .toFloat()
-                    val radius = Random().nextFloat() * 30f
-                    drawCircle(Color.Black, radius, Offset(x, y))
-                }
-            },
+//            .drawBehind {
+//                repeat(10) {
+//                    val x = Random()
+//                        .nextInt(size.width.toInt())
+//                        .toFloat()
+//                    val y = Random()
+//                        .nextInt(size.height.toInt())
+//                        .toFloat()
+//                    val radius = Random().nextFloat() * 30f
+//                    drawCircle(Color.White, radius, Offset(x, y))
+//                }
+//            },
+                ,
         horizontalAlignment = if (index % 2==0) Alignment.End else Alignment.Start,
         verticalArrangement = Arrangement.Center
     ) {
@@ -77,7 +83,7 @@ fun DotHorizontalDivider(
  */
 @Composable
 fun MyHorizontalDivider(
-    color: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+    color: Color = PastelGreen.copy(alpha = 0.4f),
     thickness: Int = 10, // in pixels
     modifier: Modifier = Modifier
 ) {

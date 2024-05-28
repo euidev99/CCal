@@ -9,5 +9,8 @@ data class UserDto(
     val name: String = "", //이름이나 닉네임
     val password: String = "", //비밀번호
     //val categoryList: String = "",// ArrayList<String> = arrayListOf() //관심분야
-    val image: String = ""
+    val image: String = "",
+    val phoneNum: String = "",
+    val address: String = "",
+    val addressNumber: String = ""
 )

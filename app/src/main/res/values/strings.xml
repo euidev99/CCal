@@ -9,9 +9,12 @@
     <string name="dialog_dismiss">확인</string>
     <!-- POPUP SNACK BAR END -->
 
+    <string name="common_confirm_exit">한 번 더 누르면 종료됩니다.</string>
+
+
     <string name="game_view_content_description">Game view</string>
     <!-- 로그인 STR -->
-    <string name="login_title">깔깔깔</string>
+    <string name="login_title">모여봐요 AR 동화숲</string>
     <string name="login_welcome">환영합니다.</string>
     <string name="login_description">로그인 통신 중입니다...</string>
     <string name="login_login">로그인</string>
@@ -35,7 +38,7 @@
     <string name="register_nickname">닉네임</string>
     <string name="register_email_desc">이메일을 입력해주세요.</string>
     <string name="register_email">이메일</string>
-    <string name="register_password_desc">비밀번호를 입력해주세요.</string>
+    <string name="register_password_desc">6자리 이상의 비밀번호를 입력해주세요.</string>
     <string name="register_password">비밀번호</string>
     <string name="register_duplicate_check">중복확인</string>
     <string name="register_duplicate_check_complete">중복확인완료</string>
@@ -47,6 +50,15 @@
     <string name="register_prev_button">이전</string>
     <string name="register_image_desc">프로필 이미지를 선택합니다.\n갤러리에서 선택하거나, 직접 촬영할 수 있습니다.</string>
     <!-- 회원가입 END -->
+
+    <!-- 로그인 & 회원가입 통신 관련 메세지 STR -->
+    <string name="error_user_registration_fail">사용자 등록에 실패했습니다.</string>
+    <string name="error_email_duplicated_">이메일이 중복되었습니다.</string>
+    <string name="error_invalid_email_address">이메일 형식이 아닙니다.</string>
+    <string name="error_invalid_password_short">비밀번호가 6자리 이하입니다.</string>
+    <string name="message_email_duplicated_check">중복 체크가 완료되었습니다.</string>
+    <string name="success_user_registration_success">사용자 등록에 성공했습니다.</string>
+    <!-- 로그인 & 회원가입 통신 관련 메세지 END -->
 
     <!-- 메인 홈 관련 STR -->
     <string name="main_feed">피드</string>
@@ -76,17 +88,42 @@
     <string name="detail_close">닫기</string>
     <string name="detail_recommend_book">추천 도서</string>
     <string name="detail_age">권장 연령</string>
+    <string name="detail_thumbnail">미리보기 이미지</string>
+    <string name="detail_move_unity">책 구매하기</string>
+    <string name="detail_loading">책을 꺼내오는 중입니다</string>
     <!-- 디테일 관련 END -->
 
-    <!-- 통신 관련 메세지 STR -->
-    <string name="error_user_registration_fail">사용자 등록에 실패했습니다.</string>
-    <string name="error_email_duplicated_">이메일이 중복되었습니다.</string>
-    <string name="error_invalid_email_address">이메일 형식이 아닙니다.</string>
-    <string name="error_invalid_password_short">비밀번호가 6자리 이하입니다.</string>
-    <string name="message_email_duplicated_check">중복 체크가 완료되었습니다.</string>
 
-    <string name="success_user_registration_success">사용자 등록에 성공했습니다.</string>
-<!--    <string name=""-->
+    <!-- 검색 관련 STR -->
+    <string name="search_main_title">검색</string>
+    <string name="search_result">검색 결과</string>
+    <string name="search_tag_book_name">책 이름</string>
+    <string name="search_tag_author_name">작가명</string>
+    <string name="search_hint">검색어를 입력하세요.</string>
+    <string name="search_result_hint">검색 결과가 여기에 나타납니다.</string>
 
-    <!-- 통신 관련 메세지 END -->
+    <string name="search_message_success">검색 완료</string>
+    <string name="search_message_fail">검색에 실패했습니다.</string>
+    <string name="search_message_error">검색 에러가 발생했습니다.</string>
+    <string name="search_message_no_result">검색 결과가 없습니다.</string>
+    <!-- 검색 관련 END -->
+
+    <!-- 책 구매 화면 STR -->
+    <string name="detail_shopping_title">구매하기</string>
+    <string name="detail_shopping_address">주소지</string>
+    <string name="detail_shopping_address_hint">주소 입력</string>
+    <string name="detail_shopping_address_number">우편번호</string>
+    <string name="detail_shopping_price">책 포인트</string>
+    <string name="detail_shopping_phone">연락처</string>
+    <string name="detail_shopping_phone_hint">숫자만 입력</string>
+    <string name="detail_shopping_memo">배달 메모</string>
+    <string name="detail_shopping_description">배달은 평균 2~3일 정도 걸릴 수 있습니다.</string>
+    <string name="detail_shopping_purchase">구매 확인</string>
+    <string name="detail_shopping_complete">구매 완료</string>
+    <string name="detail_shopping_thank">감사합니다.</string>
+
+    <string name="detail_shopping_message_success">정보 입력 및 주문 완료</string>
+    <string name="detail_shopping_message_fail">오류가 발생하였습니다.</string>
+    <!-- 책 구매 화면 END -->
+
 </resources>

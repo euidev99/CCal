@@ -53,7 +53,7 @@ fun ProgressWithText(
             modifier = modifier
         )
         
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         
         ContentText(
             text = text,

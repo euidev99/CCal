@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -43,6 +44,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -91,7 +94,7 @@ fun Register(
     val isLoading by registerViewModel.loadingProgressState
     if (isLoading) {
         ProgressWithText(
-            color = Color.Blue
+            color = MaterialTheme.colorScheme.primary
         )
     }
 
@@ -123,7 +126,7 @@ fun Register(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -139,7 +142,7 @@ fun Register(
         Header(
             viewModel = registerViewModel,
             modifier = Modifier
-                .background(Color.White)
+                .background(Color.Transparent)
                 .align(Alignment.CenterHorizontally)
                 .padding(top = offset))
 //            .clickable {
@@ -198,17 +201,16 @@ private fun Body(
         val passHint = stringResource(id = R.string.login_pass_hint)
         val nicknameHint = stringResource(id = R.string.register_name)
 
-        var emailInputText by rememberSaveable { mutableStateOf(emailHint) }
-        var passwordInputText by rememberSaveable { mutableStateOf(passHint) }
-//        var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
-        var nickNameInputText by rememberSaveable { mutableStateOf(nicknameHint) }
+        var emailInputText by rememberSaveable { mutableStateOf("") }
+        var passwordInputText by rememberSaveable { mutableStateOf("") }
+        var nickNameInputText by rememberSaveable { mutableStateOf("") }
 
         val currentStep by viewModel.currentStep // 단계별 상태 값
         val checkDuplicated by viewModel.checkDuplicatedState
         val duplicated by viewModel.duplicatedRes.observeAsState()
 
-        var errorOn by remember { mutableStateOf(false) }
-        var errorMessage by remember { mutableStateOf("") }
+        val errorOn by remember { mutableStateOf(false) }
+        val errorMessage by remember { mutableStateOf("") }
         val messageAlpha by animateFloatAsState(
             targetValue = if (errorOn) 1f else 0f,
             animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing), label = ""
@@ -227,10 +229,10 @@ private fun Body(
             LazyColumn(
               modifier = Modifier
                   .background(
-                      color = DeepSkyBlue,
+                      color = MaterialTheme.colorScheme.onBackground,
                       shape = RoundedCornerShape(
-                          topStart = 48.dp,
-                          topEnd = 48.dp
+                          topStart = 32.dp,
+                          topEnd = 32.dp
                       )
                   )
                   .fillMaxSize()
@@ -240,7 +242,7 @@ private fun Body(
 
                     ColumnTitleText(
                         text = stringResource(id = R.string.register_email),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(
                                 start = 16.dp,
@@ -253,14 +255,18 @@ private fun Body(
                     Row {
                         TextField(
                             value = emailInputText,
+                            placeholder = { ColumnTitleText(emailHint) },
                             onValueChange = { inputEmail -> emailInputText = inputEmail },
                             label = { Text(stringResource(id = R.string.register_email_desc)) },
                             colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.White,
-                                unfocusedContainerColor = Color.White,
-                                focusedIndicatorColor = Color.Black,
-                                unfocusedIndicatorColor = Color.Black,
-                                focusedTextColor = Color.Black
+                                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                                focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                focusedTextColor = MaterialTheme.colorScheme.primary,
+                                unfocusedTextColor = MaterialTheme.colorScheme.primary
                             ),
                             modifier = Modifier
                                 .padding(
@@ -278,7 +284,7 @@ private fun Body(
 
                     ColumnTitleText(
                         text = stringResource(id = R.string.register_password),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(
                                 start = 16.dp,
@@ -289,20 +295,29 @@ private fun Body(
 
                     TextField(
                         value = passwordInputText,
+                        placeholder = { ColumnTitleText(passHint) },
                         onValueChange = { inputPassword ->
                             passwordInputText = inputPassword
                         },
                         label = { Text(stringResource(id = R.string.register_password_desc)) },
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Black,
-                            unfocusedIndicatorColor = Color.Black,
-                            focusedTextColor = Color.Black
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary
                         ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done // 엔터 키를 눌렀을 때 완료(키보드 숨기기) 동작을 합니다
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
                         ),
+//                        keyboardOptions = KeyboardOptions.Default.copy(
+//                            imeAction = ImeAction.Done // 엔터 키를 눌렀을 때 완료(키보드 숨기기) 동작을 합니다
+//                        ),
                         modifier = Modifier
                             .padding(
                                 start = 16.dp,
@@ -315,7 +330,7 @@ private fun Body(
 
                     ColumnTitleText(
                         text = stringResource(id = R.string.register_nickname),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .padding(
                                 start = 16.dp,
@@ -327,16 +342,20 @@ private fun Body(
 
                     TextField(
                         value = nickNameInputText,
+                        placeholder = { ColumnTitleText(nicknameHint) },
                         onValueChange = { inputNickname ->
                             nickNameInputText = inputNickname
                         },
                         label = { Text(stringResource(id = R.string.register_nickname)) },
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Black,
-                            unfocusedIndicatorColor = Color.Black,
-                            focusedTextColor = Color.Black
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done // 엔터 키를 눌렀을 때 완료(키보드 숨기기) 동작을 합니다
@@ -370,20 +389,6 @@ private fun Body(
                                 viewModel.checkDuplicated(emailInputText)
                             }
                         }
-
-//                        RegisterButton(
-//                            text = if (checkDuplicated && duplicated == false) stringResource(id = R.string.register_register)
-//                            else stringResource(id = R.string.register_duplicate_check),
-//                            onClick = {
-//                                if (checkDuplicated && duplicated == false) {
-////                            onNavigateToRoute(MainDestination.LOGIN, true)
-//                                } else {
-//                                    viewModel.setEmailAndPassword(emailInputText, passwordInputText)
-//                                    viewModel.setProfile(nickNameInputText)
-//                                    viewModel.checkDuplicated(emailInputText)
-//                                }
-//                            }
-//                        )
                     }
                 }
             }
@@ -428,7 +433,7 @@ private fun DuplicateCheckButton(
         modifier = Modifier
             .padding(8.dp)
             .wrapContentWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.primary)
     )
 }
 
@@ -442,7 +447,7 @@ private fun DuplicateCheckCompleteButton(
         modifier = Modifier
             .padding(8.dp)
             .wrapContentWidth()
-            .background(Color.LightGray)
+//            .background(Color.LightGray)
     )
 }
 

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -41,6 +42,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,6 +59,8 @@ import com.capstone.ccal.ui.component.TitleText
 import com.capstone.ccal.ui.home.HomeSections
 import com.capstone.ccal.ui.navigation.MainDestination
 import com.capstone.ccal.ui.theme.DeepSkyBlue
+import com.capstone.ccal.ui.theme.PastelGreen
+import com.capstone.ccal.ui.theme.PastelGreenLight
 import kotlin.system.exitProcess
 
 @Composable
@@ -66,20 +71,20 @@ fun Login(
 ) {
     var exit by remember { mutableStateOf(false) }
     var exitPressedTime by remember { mutableStateOf(0L) }
-
+    val exitString = stringResource(id = R.string.common_confirm_exit)
     BackHandler { // 백프레스 이벤트
         if (exit) {
             val currentTime = System.currentTimeMillis()
             if (currentTime - exitPressedTime < 2000) {
                 exitProcess(0)
             } else {
-                Toast.makeText(CalApplication.ApplicationContext(), "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(CalApplication.ApplicationContext(), exitString, Toast.LENGTH_SHORT).show()
                 exitPressedTime = currentTime
             }
         } else {
             exit = true
             exitPressedTime = System.currentTimeMillis()
-            Toast.makeText(CalApplication.ApplicationContext(), "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(CalApplication.ApplicationContext(), exitString, Toast.LENGTH_SHORT).show()
         }
     }
     val userViewModel: UserViewModel = viewModel(factory = UserViewModel.provideFactory())
@@ -89,7 +94,7 @@ fun Login(
     if (isLoading == true) {
         ProgressWithText(
             text = stringResource(id = R.string.login_description),
-            color = Color.White
+            color = MaterialTheme.colorScheme.primary
         )
     }
 
@@ -140,7 +145,7 @@ fun Login(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
 //            .drawBehind {
 //                repeat(1) {
 //                    val x = Random()
@@ -201,13 +206,13 @@ private fun Header(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         CircularImage(
-            drawableId = if (!animationState) R.drawable.book_closed else R.drawable.book_opened,
-            size = 100.dp,
+            drawableId = if (!animationState) R.drawable.logo_white else R.drawable.logo_white,
+            size = 240.dp,
         )
 
-        TitleText(text = stringResource(id = R.string.login_title))
+//        TitleText(text = stringResource(id = R.string.login_title))
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        Spacer(modifier = Modifier.height(16.dp))
 
         if (!animationState) {
             BlinkingText(
@@ -232,20 +237,19 @@ private fun Body(
                 top = 24.dp,
             )
             .background(
-                color = DeepSkyBlue,
+                color = MaterialTheme.colorScheme.onBackground,
                 shape = RoundedCornerShape(
-                    topStart = 48.dp,
-                    topEnd = 48.dp
+                    topStart = 32.dp,
+                    topEnd = 32.dp
                 ),
             )
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
-
         val emailHint = stringResource(id = R.string.login_email_hint)
         val passHint = stringResource(id = R.string.login_pass_hint)
-        var emailInputText by remember { mutableStateOf(emailHint) }
-        var passwordInputText by remember { mutableStateOf(passHint) }
+        var emailInputText by remember { mutableStateOf("") }
+        var passwordInputText by remember { mutableStateOf("") }
 
         if (animationState) {
             Column(
@@ -262,21 +266,25 @@ private fun Body(
                 ) {
                     ColumnTitleText(
                         text = stringResource(id = R.string.login_email),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .fillMaxWidth(0.2f)
                     )
 
                     TextField(
+                        placeholder = { ColumnTitleText(emailHint) },
                         value = emailInputText,
                         onValueChange = { inputEmail -> emailInputText = inputEmail },
-                        label = { Text(stringResource(id = R.string.login_email)) },
+//                        label = { Text(stringResource(id = R.string.login_email)) },
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Black,
-                            unfocusedIndicatorColor = Color.Black,
-                            focusedTextColor = Color.Black
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done // 엔터 키를 눌렀을 때 완료(키보드 숨기기) 동작을 합니다
@@ -296,24 +304,30 @@ private fun Body(
                 ) {
                     ColumnTitleText(
                         text = stringResource(id = R.string.login_pass),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .fillMaxWidth(0.2f)
                     )
 
                     TextField(
+                        placeholder = { ColumnTitleText(passHint) },
                         value = passwordInputText,
                         onValueChange = { inputPassword -> passwordInputText = inputPassword },
-                        label = { Text(stringResource(id = R.string.login_pass)) },
+//                        label = { Text(stringResource(id = R.string.login_pass)) },
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Black,
-                            unfocusedIndicatorColor = Color.Black,
-                            focusedTextColor = Color.Black
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.primary
                         ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done // 엔터 키를 눌렀을 때 완료(키보드 숨기기) 동작을 합니다
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
                         ),
                         modifier = Modifier
                     )

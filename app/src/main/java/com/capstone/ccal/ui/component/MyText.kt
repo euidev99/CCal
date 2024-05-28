@@ -17,10 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.capstone.ccal.ui.theme.customFont
 import kotlinx.coroutines.delay
 
 /**
@@ -39,8 +41,10 @@ fun TitleText(
     Text(
         text = text,
         fontSize = fontSize,
-        style = style,
         color = color,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
         modifier = modifier
     )
@@ -58,8 +62,10 @@ fun ColumnTitleText(
     Text(
         text = text,
         fontSize = fontSize,
-        style = style,
         color = color,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
         modifier = modifier
     )
@@ -77,7 +83,9 @@ fun ContentText(
     Text(
         text = text,
         fontSize = fontSize,
-        style = style,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Bold,
         color = color,
         textAlign = TextAlign.Center,
         modifier = modifier
@@ -150,7 +158,8 @@ fun BlinkingText(
         color = color.copy(alpha = alpha), // 텍스트의 투명도를 변경
         fontWeight = FontWeight.Bold,
         fontSize = fontSize,
-        style = style,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
         textAlign = TextAlign.Center
     )
 }

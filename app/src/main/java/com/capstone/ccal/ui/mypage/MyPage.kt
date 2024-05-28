@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,13 +55,14 @@ import com.capstone.ccal.ui.component.ColumnTitleText
 import com.capstone.ccal.ui.home.HomeSections
 import com.capstone.ccal.ui.home.MainBottomBar
 import com.capstone.ccal.ui.theme.DeepSkyBlue
+import com.capstone.ccal.ui.theme.customFont
 
 
 private val titleHeight = 48.dp
 private val mainContentOffset = titleHeight.value
 private val bottomBarHeight = 48.dp
 private val bottomOffset = bottomBarHeight.value
-private val profileSectionHeight = 200.dp
+private val profileSectionHeight = 150.dp
 private val profileBackgroundHeight = 180.dp
 
 private val minProfileSectionHeight = 100.dp
@@ -144,7 +147,7 @@ private fun MyPage(
             Column(
                 modifier
                     .background(
-                        Color.White
+                        Color.Transparent
                     )
                     .fillMaxWidth()
             ) {
@@ -173,11 +176,6 @@ private fun MyPage(
                     itemClick = { }
                 )
 
-                SelectRowItem(
-                    icon = Icons.Default.Clear,
-                    text = stringResource(id = R.string.my_page_logout),
-                    itemClick = { }
-                )
             }
         }
     }
@@ -190,7 +188,7 @@ private fun BackgroundBlue(
     Box(
         modifier
             .background(
-                color = DeepSkyBlue,
+                color = MaterialTheme.colorScheme.background,
                 shape = RoundedCornerShape(
                     bottomStart = 48.dp,
                     bottomEnd = 48.dp
@@ -245,12 +243,12 @@ private fun LoginInfo(
                 .fillMaxWidth()
                 .height(infoHeight)
                 .background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     shape = RoundedCornerShape(32.dp)
                 )
                 .border(
                     width = 2.dp, // 테두리 두께
-                    color = Color.Black, // 테두리 색상
+                    color = MaterialTheme.colorScheme.background, // 테두리 색상
                     shape = RoundedCornerShape(32.dp) // 모서리 라운드 처리와 일치시킵니다.
                 )
         ) {
@@ -264,11 +262,11 @@ private fun LoginInfo(
             Spacer(modifier = Modifier.width(4.dp))
 
             Icon(
-                imageVector = Icons.Default.AccountBox,
+                tint = MaterialTheme.colorScheme.primary,
+                imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
-                modifier
+                modifier = modifier
                     .size(75.dp)
-                    .background(DeepSkyBlue)
             )
         }
     }
@@ -298,24 +296,25 @@ private fun SelectRowItem(
             modifier = Modifier
                 .padding(start = 24.dp, end = 24.dp)
                 .background(
-                    color = DeepSkyBlue,
-                    shape = RoundedCornerShape(24.dp)
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(32.dp)
                 )
                 .border(
                     width = 2.dp, // 테두리 두께
-                    color = Color.Black, // 테두리 색상
-                    shape = RoundedCornerShape(24.dp) // 모서리 라운드 처리와 일치시킵니다.
+                    color = MaterialTheme.colorScheme.background, // 테두리 색상
+                    shape = RoundedCornerShape(32.dp) // 모서리 라운드 처리와 일치시킵니다.
                 )
                 .height(64.dp)
                 .fillMaxWidth()
         ) {
             Spacer(modifier = modifier.width(16.dp))
             Icon(
+                tint = MaterialTheme.colorScheme.primary,
                 imageVector = icon,
                 contentDescription = null
             )
             Spacer(modifier = modifier.width(20.dp))
-            ColumnTitleText(text = text, color = Color.White)
+            ColumnTitleText(text = text, color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = modifier.width(16.dp))
         }
 
@@ -344,8 +343,11 @@ private fun Title(
     ) {
         Text(
             text = titleString,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge,
-            color = Color.White,//MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = modifier
                 .align(Alignment.Center)
         )

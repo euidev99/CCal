@@ -1,6 +1,8 @@
 package com.capstone.ccal.ui.home
 
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import java.util.Random
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,11 +41,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.capstone.ccal.CalApplication
 import com.capstone.ccal.R
 import com.capstone.ccal.model.BookCategoryDto
 import com.capstone.ccal.model.BookTypeCollection
@@ -52,12 +58,19 @@ import com.capstone.ccal.ui.component.DotHorizontalDivider
 import com.capstone.ccal.ui.component.LazyRowWithSnap
 import com.capstone.ccal.ui.component.MyHorizontalDivider
 import com.capstone.ccal.ui.component.PagingBookItem
+import com.capstone.ccal.ui.component.ProgressWithText
 import com.capstone.ccal.ui.theme.ForestGreen
 import com.capstone.ccal.ui.theme.Gold
 import com.capstone.ccal.ui.theme.GoldSand
 import com.capstone.ccal.ui.theme.Grey66
+import com.capstone.ccal.ui.theme.LightYellow
 import com.capstone.ccal.ui.theme.OliveGreen
+import com.capstone.ccal.ui.theme.PastelGreen
+import com.capstone.ccal.ui.theme.PastelGreenLight
 import com.capstone.ccal.ui.theme.SandGreen
+import com.capstone.ccal.ui.theme.SandStone
+import com.capstone.ccal.ui.theme.customFont
+import kotlin.system.exitProcess
 
 
 /**
@@ -71,11 +84,6 @@ fun Feed(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-//        topBar = {
-//            MainTopBar(
-//                title = stringResource(id = R.string.main_title)
-//            )
-//        },
         bottomBar = {
             MainBottomBar(
                 tabs = HomeSections.entries.toTypedArray(),
@@ -100,6 +108,25 @@ fun Feed(
 //            },
 //            .background(MaterialTheme.colorScheme.background)
     ) { paddingValues ->
+
+        var exit by remember { mutableStateOf(false) }
+        var exitPressedTime by remember { mutableStateOf(0L) }
+        val exitString = stringResource(id = R.string.common_confirm_exit)
+        BackHandler { // 백프레스 이벤트
+            if (exit) {
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - exitPressedTime < 2000) {
+                    exitProcess(0)
+                } else {
+                    Toast.makeText(CalApplication.ApplicationContext(), exitString, Toast.LENGTH_SHORT).show()
+                    exitPressedTime = currentTime
+                }
+            } else {
+                exit = true
+                exitPressedTime = System.currentTimeMillis()
+                Toast.makeText(CalApplication.ApplicationContext(), exitString, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         val feedViewModel: FeedViewModel = viewModel(factory = FeedViewModel.provideFactory(FeedRepo()))
         val feedRes by feedViewModel.feedRes.observeAsState()
@@ -127,8 +154,7 @@ fun Feed(
             categoryCollection = categoryRes?.categoryList,
             onDetailClick = onDetailClick,
             Modifier
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)//MaterialTheme.colorScheme.background)
         )
     }
 }
@@ -148,7 +174,7 @@ private fun Feed(
         modifier
             .fillMaxSize()
             .background(
-                Color.White
+                MaterialTheme.colorScheme.background
             )
 //            .drawBehind {
 //                repeat(15) {
@@ -164,30 +190,41 @@ private fun Feed(
 //            },
     ) {
 
-            Title(
-                titleString = stringResource(id = R.string.main_title),
+        Title(
+            titleString = stringResource(id = R.string.main_title),
+            scrollProvider = { scroll.value },
+        )
+
+        categoryCollection?.let {
+            BookCategoryCollection(
+                collection = categoryCollection,
+                selectedIndex = selectedCategoryIndex,
+                onToggle = onSelectCategory,
                 scrollProvider = { scroll.value },
+                modifier = Modifier.zIndex(1f)
             )
+        }
 
-            categoryCollection?.let {
-                BookCategoryCollection(
-                    collection = categoryCollection,
-                    selectedIndex = selectedCategoryIndex,
-                    onToggle = onSelectCategory,
-                    scrollProvider = { scroll.value },
-                    modifier = Modifier.zIndex(1f)
+        if (feedCollection == null) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                ProgressWithText(
+                    text = stringResource(id = R.string.detail_loading),
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
-
-            feedCollection?.let {
-                FeedCollections(
-                    feedCollections = it,
-                    onDetailClick = onDetailClick,
-                    scroll = scroll,
-                    scrollProvider = { scroll.value },
-                    modifier = Modifier.zIndex(0f)
-                )
-            }
+        } else {
+            FeedCollections(
+                feedCollections = feedCollection,
+                onDetailClick = onDetailClick,
+                scroll = scroll,
+                scrollProvider = { scroll.value },
+                modifier = Modifier.zIndex(0f)
+            )
+        }
     }
 }
 
@@ -213,7 +250,9 @@ private fun Title(
         Text(
             text = titleString,
             fontSize = 24.sp,
-            style = MaterialTheme.typography.titleLarge,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.primary,
             modifier = modifier
                 .align(Alignment.Center)
@@ -262,15 +301,17 @@ private fun FeedCollections(
                     )
                 }
                 2 -> {
-                    PromotionSection(
-                        collection = collection,
-                        onDetailClick = onDetailClick,
-                        index = index,
-                        scrollValue = { scroll.value }
-                    )
+//                    PromotionSection(
+//                        collection = collection,
+//                        onDetailClick = onDetailClick,
+//                        index = index,
+//                        scrollValue = { scroll.value }
+//                    )
                 }
             }
         }
+        
+        Spacer(modifier = modifier.height(56.dp))
     }
 }
 
@@ -335,9 +376,11 @@ private fun BookCollection(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "collectionName : ${collection.collectionName}",
+        text = collection.collectionName,
         fontSize = 20.sp,
-        style = MaterialTheme.typography.titleMedium,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(
             horizontal = 12.dp,
@@ -373,10 +416,12 @@ private fun BookPagingCollection(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "Paging collectionName : ${collection.collectionName}",
+        text = collection.collectionName,
         fontSize = 20.sp,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
+        fontFamily = customFont,
+        fontStyle = FontStyle.Normal,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,//MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(
             horizontal = 12.dp,
             vertical = 12.dp
@@ -398,17 +443,6 @@ private fun BookPagingCollection(
             }
         }
     }
-//
-//    LazyRowWithSnap(
-//        items = collection.itemList,
-//        onItemClick = {}
-//    ) { itemContent -> {
-//
-//    }
-//
-//    }
-
-//    MyHorizontalDivider()
 
     DotHorizontalDivider(index)
 }

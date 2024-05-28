@@ -35,6 +35,14 @@ data class BookCollectionResponse(
 )
 
 /**
+ * Search Detail
+ */
+data class BookSearchResponse(
+    val collectionList: List<BookDetailItem> = listOf()
+)
+
+
+/**
  * 책 목록
  * Search 화면 등에서 사용
  */
@@ -50,6 +58,7 @@ data class BookDetailItem(
     val bookName: String = "bookName",
     val bookImageUrl: String = "",
     val authorList: List<AuthorDto> = listOf(AuthorDto(), AuthorDto()),
+    val bookImageList: List<String> = listOf(""),
     val price: Int = 0,
     val contentLevel: Int = 0,
     val mainCategory: String = "",

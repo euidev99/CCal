@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.capstone.ccal.common.AppConst
 import com.capstone.ccal.common.BaseRepository
+import com.capstone.ccal.common.FirebaseStorageUtils
 import com.capstone.ccal.common.RepoResult
 import com.capstone.ccal.model.BookCategoryDto
 import com.capstone.ccal.model.BookCategoryResponse
@@ -30,7 +31,19 @@ class FeedRepo {
                 val data = result.data
                 val responseList = BookCollectionResponse(data)
 
-                _feedResponse.value = responseList
+                val newCollection = mutableListOf<BookTypeCollection>()
+
+                for (collection in data) {
+                    val updatedList = mutableListOf<BookItemDto>()
+                    for (item in collection.itemList) {
+                        val firebaseImageUrl = FirebaseStorageUtils.getImageUrl(item.imageUrl)
+                        updatedList.add(item.copy(imageUrl = firebaseImageUrl))
+                    }
+
+                    newCollection.add(collection.copy(itemList = updatedList))
+                }
+
+                _feedResponse.value = BookCollectionResponse(newCollection)
             }
 
             is RepoResult.Error -> {

@@ -5,10 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.capstone.ccal.common.AppConst
 import com.capstone.ccal.common.BaseRepository
+import com.capstone.ccal.common.FirebaseStorageUtils
 import com.capstone.ccal.common.RepoResult
 import com.capstone.ccal.model.BookCategoryResponse
 import com.capstone.ccal.model.BookCollectionResponse
 import com.capstone.ccal.model.BookDetailItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 개별 책 아이템 가져오기
@@ -24,9 +27,21 @@ class BookRepository {
             is RepoResult.Success -> {
                 Log.d("seki", ">> getBookDetail RepoResult.Success")
                 val data = result.data
-
                 if (data.isNotEmpty()) {
-                    _bookDetailRes.value = data[0]
+
+                    val firebaseImageUrl = FirebaseStorageUtils.getImageUrl(data[0].bookImageUrl)
+
+                    val updatedList = mutableListOf<String>()
+                    // 기존의 bookImageList를 순회하면서 Firebase로부터 이미지 URL을 가져와서 업데이트
+                    for (imageUrl in data[0].bookImageList) {
+                        val firebaseUrl = FirebaseStorageUtils.getImageUrl(imageUrl)
+                        updatedList.add(firebaseUrl)
+                    }
+
+                    _bookDetailRes.value = data[0].copy(
+                        bookImageUrl = firebaseImageUrl,
+                        bookImageList = updatedList
+                    )
                 }
             }
 

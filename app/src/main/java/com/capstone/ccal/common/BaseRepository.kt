@@ -164,7 +164,6 @@ open class BaseRepository<T: Any>(
         }
     }
 
-
     suspend fun getDocumentsByField(fieldName: String, value: Any): RepoResult<List<T>> = withContext(Dispatchers.IO) {
         try {
             val querySnapshot = collectionReference.whereEqualTo(fieldName, value).get().await()

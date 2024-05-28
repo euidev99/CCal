@@ -21,17 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.capstone.ccal.model.BookCategoryDto
-import com.capstone.ccal.ui.theme.Black40
 import com.capstone.ccal.ui.theme.Black99
-import com.capstone.ccal.ui.theme.Grey4a
+import com.capstone.ccal.ui.theme.customFont
 
 
 @Composable
@@ -45,16 +44,16 @@ fun BookCategoryItem(
         modifier
             .background(
                 color = if (isSelected) Color.White else Color.LightGray,
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
             )
             .border(
                 width = 2.dp,
                 color = if (isSelected) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
             )
             .widthIn(min = 40.dp)
-            .height(32.dp)
+            .heightIn(min = 32.dp)
             .clickable {
                 onToggle()
             }
@@ -63,10 +62,12 @@ fun BookCategoryItem(
         Text(
             text = categoryDto.category,
             fontSize = 14.sp,
-            style = MaterialTheme.typography.labelMedium,
-            color = (if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary),
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Normal,
+            color = (if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.secondary),
             modifier = Modifier
-                .padding(4.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
                 .align(Alignment.Center)
         )
     }

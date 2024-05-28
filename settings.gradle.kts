@@ -18,7 +18,7 @@ dependencyResolutionManagement {
 
 
 rootProject.name = "CCal"
-
+//include(":app")
 //include(":xrmanifest.androidlib")
 //project(":unityLibrary").projectDir = file("./unityLibrary")
 //project(":xrmanifest.androidlib").projectDir = file("./unityLibrary/xrmanifest.androidlib")

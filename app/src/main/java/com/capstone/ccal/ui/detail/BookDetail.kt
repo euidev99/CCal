@@ -16,7 +16,6 @@
 
 package com.capstone.ccal.ui.detail
 
-import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -31,6 +30,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,14 +42,20 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,6 +73,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
@@ -74,13 +83,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.ccal.R
 import com.capstone.ccal.common.formatPrice
 import com.capstone.ccal.model.BookDetailItem
 import com.capstone.ccal.ui.component.AuthorDetailPopup
-import com.capstone.ccal.ui.component.BookImage
+import com.capstone.ccal.ui.component.BookImageRound
+import com.capstone.ccal.ui.component.BookMainImage
 import com.capstone.ccal.ui.component.MyHorizontalDivider
+import com.capstone.ccal.ui.component.ProgressWithText
+import com.capstone.ccal.ui.theme.customFont
 import com.capstone.ccal.ui.util.mirroringBackIcon
 import kotlin.math.max
 import kotlin.math.min
@@ -94,7 +107,7 @@ private val MinImageOffset = 12.dp
 private val MaxTitleOffset = ImageOverlap + MinTitleOffset + GradientScroll
 private val ExpandedImageSize = 300.dp
 private val CollapsedImageSize = 150.dp
-private val HzPadding = Modifier.padding(horizontal = 24.dp)
+private val HzPadding = Modifier.padding(horizontal = 12.dp)
 
 @Composable
 fun BookDetail(
@@ -110,6 +123,8 @@ fun BookDetail(
     var authorDetailVisible by rememberSaveable { mutableStateOf(false) }
     var selectedAuthorIndex by rememberSaveable { mutableStateOf(0) }
 
+    var shoppingScreenVisible by rememberSaveable { mutableStateOf(false) }
+
     //데이터 가져오기
     LaunchedEffect(Unit) {
         if (book == null) {
@@ -119,14 +134,26 @@ fun BookDetail(
 
     if (book == null) {
         // progress
-        Box(Modifier.fillMaxSize()) {
-            Text(text = "loading ")
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            ProgressWithText(
+                text = stringResource(id = R.string.detail_loading),
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     } else {
-        Box(Modifier.fillMaxSize()) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             val scroll = rememberScrollState(0)
             Header()
             Body(
+                imageList = book!!.bookImageList,
                 scroll,
                 book,
                 onSelectAuthor = { index ->
@@ -139,7 +166,10 @@ fun BookDetail(
             }
             Image(book!!.bookImageUrl) { scroll.value }
             Up(upPress)
-//        CartBottomBar(modifier = Modifier.align(Alignment.BottomCenter))
+            DetailBottomBar(
+                onClick = { shoppingScreenVisible = true },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
             Log.d("seki", "scroll value : ${scroll.value}")
         }
     }
@@ -158,6 +188,57 @@ fun BookDetail(
             onDismiss = { authorDetailVisible = false }
         )
     }
+
+    //디테일 안에서, 하단 바 선택했을 경우
+    AnimatedVisibility(
+        visible = shoppingScreenVisible,
+        enter = slideInVertically() + expandVertically(
+            expandFrom = Alignment.Top
+        ) + fadeIn(initialAlpha = 0.3f),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    ) {
+        book?.let {
+            ShoppingCartScreen(
+                bookDetailItem = it,
+                onDismiss = { shoppingScreenVisible = false }
+            )
+        }
+    }
+}
+
+/**
+ * 하단 바텀 바
+ */
+@Composable
+private fun DetailBottomBar(
+    onClick : () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier
+            .height(BottomBarHeight)
+            .background(MaterialTheme.colorScheme.onBackground)
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            },
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(id = R.string.detail_move_unity),
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Icon(
+            imageVector = Icons.Default.PlayArrow,
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = ""
+        )
+    }
 }
 
 @Composable
@@ -167,11 +248,15 @@ private fun Header() {
             .height(280.dp)
             .fillMaxWidth()
             .background(
-                brush = Brush.verticalGradient(listOf(Color.Magenta, Color.Yellow, Color.White)),
+                brush = Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.onBackground,
+                        MaterialTheme.colorScheme.onSurface,
+                        MaterialTheme.colorScheme.background
+                    )
+                ),
                 alpha = 0.4f,
-//                shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             )
-//            .background(Brush.horizontalGradient(JetsnackTheme.colors.tornado1))
     )
 }
 
@@ -184,9 +269,9 @@ private fun Up(upPress: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 10.dp)
             .size(36.dp)
             .background(
-                color = MaterialTheme.colorScheme.background.copy(alpha = 0.32f),
+                color = MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
                 shape = CircleShape
-            )
+            ).zIndex(5f)
     ) {
         Icon(
             imageVector = mirroringBackIcon(),
@@ -200,13 +285,17 @@ private fun Up(upPress: () -> Unit) {
 @Composable
 private fun Body(
 //    related: List<SnackCollection>,
+    imageList: List<String>,
     scroll: ScrollState,
     book: BookDetailItem?,
-    onSelectAuthor: (Int) -> Unit
+    onSelectAuthor: (Int) -> Unit,
+    modifier : Modifier = Modifier.background(Color.Transparent)
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Spacer(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(MinTitleOffset)
@@ -216,18 +305,22 @@ private fun Body(
 //                }
         )
         Column(
-            modifier = Modifier.verticalScroll(scroll)
+            modifier = modifier.verticalScroll(scroll)
         ) {
             Spacer(Modifier.height(GradientScroll))
-            Surface(Modifier.fillMaxWidth()) {
-                Column {
+            Surface(modifier.fillMaxWidth()) {
+                Column(
+                    modifier = modifier.background(MaterialTheme.colorScheme.background)
+                ) {
                     Spacer(Modifier.height(ImageOverlap))
                     Spacer(Modifier.height(TitleHeight))
 
                     Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(id = R.string.detail_description_title),
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = customFont,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = HzPadding
                     )
@@ -236,9 +329,11 @@ private fun Body(
                     book?.let {
                         Text(
                             text = it.bookDescription,
-                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = customFont,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.primary,
-                            maxLines = if (seeMore) 5 else Int.MAX_VALUE,
+                            maxLines = if (seeMore) 1 else Int.MAX_VALUE,
                             overflow = TextOverflow.Ellipsis,
                             modifier = HzPadding
                         )
@@ -248,23 +343,35 @@ private fun Body(
                     } else {
                         stringResource(id = R.string.detail_close)
                     }
-                    Text(
-                        text = textButton,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
+
+                    Button(
+                        shape = RoundedCornerShape(18.dp),
                         modifier = Modifier
-                            .heightIn(20.dp)
-                            .fillMaxWidth()
-                            .padding(top = 15.dp)
-                            .clickable {
-                                seeMore = !seeMore
-                            }
-                    )
+                        .align(Alignment.CenterHorizontally),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onSurface, // 버튼의 배경색을 변수에 연결합니다.
+                            contentColor = MaterialTheme.colorScheme.primary // 텍스트 색상을 지정합니다.
+                        ), // 배경색 지정
+                        onClick = {
+                            seeMore = !seeMore
+                        }
+                    ) {
+                        Text(
+                            text = textButton,
+                            textAlign = TextAlign.Center,
+                            fontFamily = customFont,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+
                     Spacer(Modifier.height(40.dp))
                     Text(
                         text = stringResource(R.string.detail_author_name),
-                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = customFont,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = HzPadding
                             .clickable {
@@ -275,7 +382,9 @@ private fun Body(
                     book?.let {
                         Text(
                             text = it.authorList.get(0).authorName,//stringResource(R.string.ingredients_list),
-                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = customFont,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = HzPadding
                         )
@@ -284,17 +393,14 @@ private fun Body(
                     Spacer(Modifier.height(16.dp))
                     MyHorizontalDivider()
 
-                    Spacer(Modifier.height(300.dp))
+//                    Spacer(Modifier.height(300.dp))
 
-//                    related.forEach { snackCollection ->
-//                        key(snackCollection.id) {
-//                            SnackCollection(
-//                                snackCollection = snackCollection,
-//                                onSnackClick = { },
-//                                highlight = false
-//                            )
-//                        }
-//                    }
+                    book?.bookImageList?.let {
+                        BookListCollection(
+                            stringResource(id = R.string.detail_thumbnail),
+                            bookItemsUrl = it
+                        )
+                    }
 
                     Spacer(
                         modifier = Modifier
@@ -303,6 +409,54 @@ private fun Body(
                             .height(8.dp)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BookListCollection(
+    collectionName: String,
+    bookItemsUrl: List<String>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+
+        Spacer(Modifier.height(16.dp))
+
+        Text(
+            text = collectionName,
+            fontSize = 20.sp,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = modifier.padding(
+                horizontal = 12.dp,
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(items = bookItemsUrl, key =  { imageUrl -> imageUrl }) { imageUrl ->
+//                if (imageUrl.isNotEmpty()) {
+
+                    Log.d("aaa", "start")
+
+                    BookImageRound(
+                        imageUrl = imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(150.dp)
+                    )
+//                }
             }
         }
     }
@@ -328,21 +482,28 @@ private fun Title(book: BookDetailItem, scrollProvider: () -> Int) {
         Spacer(Modifier.height(16.dp))
         Text(
             text = book.bookName,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.secondary,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Black,
+            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.primary,
             modifier = HzPadding
         )
         Text(
             text = book.mainCategory,
-            style = MaterialTheme.typography.titleMedium,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Normal,
             fontSize = 20.sp,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = HzPadding
         )
         Spacer(Modifier.height(4.dp))
         Text(
             text = formatPrice(book.price),
-            style = MaterialTheme.typography.titleSmall,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.primary,
             modifier = HzPadding
         )
@@ -366,7 +527,7 @@ private fun Image(
         collapseFractionProvider = collapseFractionProvider,
         modifier = HzPadding.statusBarsPadding()
     ) {
-        BookImage(
+        BookMainImage(
             imageUrl = imageUrl,
             contentDescription = null,
             modifier = Modifier.fillMaxSize()
@@ -408,51 +569,3 @@ private fun CollapsingImageLayout(
     }
 }
 
-//@Composable
-//private fun CartBottomBar(modifier: Modifier = Modifier) {
-//    val (count, updateCount) = remember { mutableStateOf(1) }
-//    JetsnackSurface(modifier) {
-//        Column {
-//            JetsnackDivider()
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .navigationBarsPadding()
-//                    .then(HzPadding)
-//                    .heightIn(min = BottomBarHeight)
-//            ) {
-//                QuantitySelector(
-//                    count = count,
-//                    decreaseItemCount = { if (count > 0) updateCount(count - 1) },
-//                    increaseItemCount = { updateCount(count + 1) }
-//                )
-//                Spacer(Modifier.width(16.dp))
-//                JetsnackButton(
-//                    onClick = { /* todo */ },
-//                    modifier = Modifier.weight(1f)
-//                ) {
-//                    Text(
-//                        text = stringResource(R.string.add_to_cart),
-//                        modifier = Modifier.fillMaxWidth(),
-//                        textAlign = TextAlign.Center,
-//                        maxLines = 1
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//@Preview("default")
-//@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Preview("large font", fontScale = 2f)
-//@Composable
-//private fun SnackDetailPreview() {
-//    JetsnackTheme {
-//        SnackDetail(
-//            snackId = 1L,
-//            upPress = { }
-//        )
-//
-//    }
-//}
