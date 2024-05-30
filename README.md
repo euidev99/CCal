@@ -15,5 +15,6 @@ https://github.com/NaseulLim/kkalkkalkkal_unity
 
 전체 설명을 위해, 제작한 판넬입니다.
 <p align="center"
-<img src="https://github.com/euidev99/CCal/files/15500378/pamplet3.pdf"
+<img src="[https://github.com/euidev99/CCal/files/15500378/pamplet3.pdf](https://github.com/euidev99/CCal/assets/135210543/ddbbab81-98fa-4161-ba26-e4b9faacf101)"
   </p>
+
