@@ -13,6 +13,8 @@ import com.capstone.ccal.R
 import com.capstone.ccal.common.AppConst
 import com.capstone.ccal.common.BaseRepository
 import com.capstone.ccal.common.RepoResult
+import com.capstone.ccal.model.BookDetailItem
+import com.capstone.ccal.model.Order
 import com.capstone.ccal.model.UserDto
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +28,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 class RegisterRepository {
@@ -165,17 +169,44 @@ class RegisterRepository {
                                email: String,
                                newPhone: String,
                                newAddress: String,
-                               newAddressNumber: String
+                               newAddressNumber: String,
+                               deliveryMemo: String
     ): RepoResult<Unit> {
         val userRepository = BaseRepository(AppConst.FIREBASE.USER_INFO, UserDto::class.java)
 
         val updates = mapOf(
             "phone" to newPhone,
             "address" to newAddress,
-            "addressNumber" to newAddressNumber
+            "addressNumber" to newAddressNumber,
+            "deliveryMemo" to deliveryMemo
         )
 
         return userRepository.updateDocument(email, updates)
+    }
+
+    private fun getCurrentDateTime(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return current.format(formatter)
+    }
+    suspend fun addOrder(email: String,
+                         orderItem: BookDetailItem,
+                         phone: String,
+                         name: String
+    ): RepoResult<String> {
+        val orderRepository = BaseRepository(AppConst.FIREBASE.ORDER, Order::class.java)
+
+        val order = Order(
+            orderDate = getCurrentDateTime(),
+            itemName = orderItem.bookName,
+            itemPoint = orderItem.price.toString(),
+            itemId = orderItem.bookId,
+            phone = phone,
+            userName = name
+        )
+
+//        return orderRepository.addDocumentWithId(email, order)
+        return orderRepository.addDocumentToSecondCollection(email, AppConst.FIREBASE.ORDER, order)
     }
 
     //계정에 사용자 등록 후, 성공시 정보를 DB 에 추가로 저장하도록 함

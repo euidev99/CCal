@@ -1,5 +1,8 @@
 package com.capstone.ccal.ui.detail
 
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -32,9 +36,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,21 +43,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.capstone.ccal.CalApplication
 import com.capstone.ccal.R
 import com.capstone.ccal.model.BookDetailItem
 import com.capstone.ccal.ui.component.AlertSnackBar
 import com.capstone.ccal.ui.component.BookImageRound
 import com.capstone.ccal.ui.component.ColumnTitleText
-import com.capstone.ccal.ui.component.MyHorizontalDivider
+import com.capstone.ccal.ui.component.HorizontalItemDivider
 import com.capstone.ccal.ui.component.ProgressWithText
 import com.capstone.ccal.ui.login.RegisterRepository
 import com.capstone.ccal.ui.theme.customFont
 import com.capstone.ccal.ui.util.mirroringBackIcon
+import kotlin.system.exitProcess
 
 private val TitleHeight = 128.dp
 private val HeaderHeight = 56.dp
@@ -80,8 +82,9 @@ fun ShoppingCartScreen(
     //버퍼링 프로세스
     val isLoading by viewModel.loadingProgressState
     if (isLoading) {
+        Log.d("seki", "Loading Start")
         ProgressWithText(
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 
@@ -103,14 +106,20 @@ fun ShoppingCartScreen(
         )
     }
 
-    Dialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onDismiss,
-    ) {
+    val dismiss by viewModel.dismissState
+
+    if (dismiss) {
+        onDismiss()
+    }
+
+//    Dialog(
+//        properties = DialogProperties(usePlatformDefaultWidth = false),
+//        onDismissRequest = onDismiss,
+//    ) {
         Box(
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.secondary)
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
             val scroll = rememberScrollState(0)
@@ -119,7 +128,9 @@ fun ShoppingCartScreen(
                 vm = viewModel,
                 scroll = scroll,
                 bookDetailItem = bookDetailItem,
-                modifier = Modifier.padding(horizontal = horizontalPv)
+                modifier = Modifier.padding(
+                    horizontal = horizontalPv,
+                    )
             )
             Up(onDismiss)
 
@@ -127,17 +138,12 @@ fun ShoppingCartScreen(
                 modifier
                     .align(Alignment.BottomCenter)
                     .clickable {
-//                        vm.updatePhoneNumber(
-//                            documentId = UserRepository.getEmail(CalApplication.ApplicationContext()),
-//                            newPhone = phoneInputText,
-//                            newAddress = addressInputText,
-//                            newAddressNumber = addNumInputText
-//                        )
+                        viewModel.updateInfo(bookDetailItem)
                     }
             )
         }
     }
-}
+//}
 
 @Composable
 private fun ShoppingCartBottomBar(
@@ -147,7 +153,8 @@ private fun ShoppingCartBottomBar(
         modifier
             .height(BottomBarHeight)
             .background(MaterialTheme.colorScheme.onBackground)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+        ,
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -182,8 +189,8 @@ private fun Body(
         Spacer(
             modifier = modifier
                 .fillMaxWidth()
-                .statusBarsPadding()
-                .height(TitleHeight)
+//                .statusBarsPadding()
+                .height(HeaderHeight)
         )
 
         Column(
@@ -191,6 +198,9 @@ private fun Body(
                 .verticalScroll(scroll)
                 .fillMaxSize()
         ) {
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Row(modifier = modifier) {
                 Column(
                     modifier = Modifier
@@ -207,115 +217,110 @@ private fun Body(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column() {
-                    ColumnTitleText(text = bookDetailItem.bookName)
+                    ColumnTitleText(
+                        text = bookDetailItem.bookName,
+                        modifier = Modifier
+                            .align(Alignment.Start))
                     Spacer(modifier = Modifier.height(4.dp))
-                    ColumnTitleText(text = bookDetailItem.bookDescription)
+                    ColumnTitleText(
+                        text = "${bookDetailItem.price} Point",
+                        modifier = Modifier
+                            .align(Alignment.Start))
                 }
             }
 
-            MyHorizontalDivider()
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalItemDivider()
 
             val addressHint = stringResource(id = R.string.detail_shopping_address_hint)
             val addNumberHint = stringResource(id = R.string.detail_shopping_address_number)
             val phoneNumberHint = stringResource(id = R.string.detail_shopping_phone)
+            val memoHint = stringResource(id = R.string.detail_shopping_memo_hint)
+            val nameHint = stringResource(id = R.string.detail_shopping_name)
 
-            var addressInputText by rememberSaveable { mutableStateOf("") }
-            var addNumInputText by rememberSaveable { mutableStateOf("") }
-            var phoneInputText by rememberSaveable { mutableStateOf("") }
+            Spacer(modifier = Modifier.height(8.dp))
 
-            ColumnTitleText(
+            ColumnTitleText( //주소지
                 text = stringResource(id = R.string.detail_shopping_address),
                 color = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row {
-                CustomTextField(
-                    value = addressInputText,
-                    placeholder = addressHint,
-                    label = stringResource(id = R.string.detail_shopping_address_hint),
-                    onValueChange = { inputText -> addressInputText = inputText },
-                )
+            CustomTextField(
+                value = vm.address.value,
+                placeholder = addressHint,
+                label = stringResource(id = R.string.detail_shopping_address_hint),
+                onValueChange = { inputText -> vm.address.value = inputText },
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-                CustomTextField(
-                    value = addNumInputText,
-                    placeholder = addNumberHint,
-                    label = stringResource(id = R.string.detail_shopping_address_hint),
-                    onValueChange = { inputText -> addNumInputText = inputText },
-                )
-            }
+            ColumnTitleText( //우편번호
+                text = stringResource(id = R.string.detail_shopping_address_number),
+                color = MaterialTheme.colorScheme.primary,
+            )
 
-            ColumnTitleText(
-                //전화번호
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CustomTextField(
+                value = vm.addressNum.value,
+                placeholder = addNumberHint,
+                label = stringResource(id = R.string.detail_shopping_address_hint),
+                onValueChange = { inputText -> vm.addressNum.value = inputText },
+                keyboardType = KeyboardType.Number
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ColumnTitleText( //수취인
+                text = stringResource(id = R.string.detail_shopping_name),
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            CustomTextField(
+                value = vm.userName.value,
+                placeholder = nameHint,
+                label = stringResource(id = R.string.detail_shopping_name),
+                onValueChange = { inputText -> vm.userName.value = inputText },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ColumnTitleText( //전화번호
                 text = stringResource(id = R.string.detail_shopping_phone),
                 color = MaterialTheme.colorScheme.primary,
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             CustomTextField(
-                //전화번호
-                value = phoneInputText,
+                value = vm.phone.value,
                 placeholder = phoneNumberHint,
                 label = stringResource(id = R.string.detail_shopping_phone_hint),
-                onValueChange = { inputText -> phoneInputText = inputText },
+                onValueChange = { inputText -> vm.phone.value = inputText },
+                keyboardType = KeyboardType.Number
             )
 
-            //test
-            ColumnTitleText(
-                //전화번호
-                text = stringResource(id = R.string.detail_shopping_phone),
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ColumnTitleText( //배송 메모
+                text = stringResource(id = R.string.detail_shopping_memo),
                 color = MaterialTheme.colorScheme.primary,
             )
 
-            CustomTextField(
-                //전화번호
-                value = phoneInputText,
-                placeholder = phoneNumberHint,
-                label = stringResource(id = R.string.detail_shopping_phone_hint),
-                onValueChange = { inputText -> phoneInputText = inputText },
-            )
-            ColumnTitleText(
-                //전화번호
-                text = stringResource(id = R.string.detail_shopping_phone),
-                color = MaterialTheme.colorScheme.primary,
-            )
+            Spacer(modifier = Modifier.height(8.dp))
 
             CustomTextField(
-                //전화번호
-                value = phoneInputText,
-                placeholder = phoneNumberHint,
-                label = stringResource(id = R.string.detail_shopping_phone_hint),
-                onValueChange = { inputText -> phoneInputText = inputText },
-            )
-            ColumnTitleText(
-                //전화번호
-                text = stringResource(id = R.string.detail_shopping_phone),
-                color = MaterialTheme.colorScheme.primary,
+                value = vm.deliveryMemo.value,
+                placeholder = memoHint,
+                label = stringResource(id = R.string.detail_shopping_memo_hint),
+                onValueChange = { inputText -> vm.deliveryMemo.value = inputText },
+                modifier = Modifier.heightIn(min = 150.dp)
             )
 
-            CustomTextField(
-                //전화번호
-                value = phoneInputText,
-                placeholder = phoneNumberHint,
-                label = stringResource(id = R.string.detail_shopping_phone_hint),
-                onValueChange = { inputText -> phoneInputText = inputText },
-            )
-            ColumnTitleText(
-                //전화번호
-                text = stringResource(id = R.string.detail_shopping_phone),
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            CustomTextField(
-                //전화번호
-                value = phoneInputText,
-                placeholder = phoneNumberHint,
-                label = stringResource(id = R.string.detail_shopping_phone_hint),
-                onValueChange = { inputText -> phoneInputText = inputText },
-            )
-            
             Spacer(modifier = modifier.height(BottomBarHeight + 16.dp))
 
         }
@@ -330,7 +335,8 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
-    imeAction: ImeAction = ImeAction.Done
+    imeAction: ImeAction = ImeAction.Done,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     TextField(
         value = value,
@@ -350,7 +356,8 @@ fun CustomTextField(
         maxLines = maxLines,
         modifier = modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = imeAction
+            imeAction = imeAction,
+            keyboardType = keyboardType
         )
     )
 }
@@ -361,14 +368,20 @@ fun CustomTextField(
 private fun Header(
 
 ) {
-    Spacer(
+    Row(
         modifier = Modifier
             .height(HeaderHeight)
             .fillMaxWidth()
             .background(
                 MaterialTheme.colorScheme.onBackground
-            )
-    )
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ColumnTitleText(
+            text = "배송지 입력하기",
+        )
+    }
 }
 
 @Composable

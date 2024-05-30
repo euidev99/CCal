@@ -8,7 +8,8 @@ data class AuthorDto(
     val authorId: String = "작가Id",
     val authorName: String = "작가명",
     val description: String = "작가님 설명",
-    val authorType: String = "작가" //역자 식자 등등
+    val authorType: String = "작가", //역자 식자 등등,
+    val imageUrl: String = "",
 )
 
 /**

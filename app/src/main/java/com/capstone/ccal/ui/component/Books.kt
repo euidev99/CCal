@@ -168,16 +168,27 @@ fun BookItemSearch(
                 .width(60.dp)
                 .height(80.dp)
         ) {
-            val bookIcon =
-                painterResource(id = R.drawable.logo_icon) // 이 부분에서 에셋에서 이미지 리소스를 가져옵니다.
-            Image(
-                painter = bookIcon,
-                contentDescription = "Book Default Image",
-                modifier = Modifier
-                    .size(56.dp)
-                    .padding(8.dp)
-                    .align(Alignment.Center)// 이미지의 크기 조정을 위해 Modifier 사용
-            )
+            if (item.bookImageUrl != "") {
+                BookImageRound(
+                    imageUrl = item.bookImageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(170.dp)
+                        .padding(8.dp)
+                        .align(Alignment.Center)
+                )
+            } else {
+                val bookIcon =
+                    painterResource(id = R.drawable.logo_icon) // 이 부분에서 에셋에서 이미지 리소스를 가져옵니다.
+                Image(
+                    painter = bookIcon,
+                    contentDescription = "Book Default Image",
+                    modifier = Modifier
+                        .size(170.dp)
+                        .padding(8.dp)
+                        .align(Alignment.Center)// 이미지의 크기 조정을 위해 Modifier 사용
+                )
+            }
         }
 
         //글씨 들어갈 우측 영역

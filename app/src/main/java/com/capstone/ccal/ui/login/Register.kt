@@ -175,8 +175,8 @@ private fun Header(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularImage(
-            drawableId = R.drawable.book_opened,
-            size = 100.dp
+            drawableId = R.drawable.logo_white,
+            size = 240.dp
         )
 
         TitleText(text = stringResource(id = R.string.login_title))

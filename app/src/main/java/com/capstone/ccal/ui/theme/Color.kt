@@ -42,4 +42,5 @@ val RoyalBlue = Color(0xFF4169E1)
 val GreenBlue = Color(0xFF0056AA)
 
 val PastelGreen = Color(0xFF529B79)
+val PastelGreenSecond = Color(0xFF6DAA82)
 val PastelGreenLight = Color(0xFFbdcda2)

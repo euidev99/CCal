@@ -12,5 +12,29 @@ data class UserDto(
     val image: String = "",
     val phoneNum: String = "",
     val address: String = "",
-    val addressNumber: String = ""
+    val addressNumber: String = "",
+    val deliveryMemo: String = ""
 )
+
+/**
+ * 주문내역
+ */
+data class Order(
+    val orderDate: String = "",
+    val phone: String = "",
+    val userName: String = "",
+    val itemName: String = "",
+    val itemPoint: String = "",
+    val itemId: String = "",
+    val completion: String = DeliveryState.WAITING.message,
+)
+
+data class OrderListResponse(
+    val orderList: List<Order>
+)
+
+
+enum class DeliveryState(val message: String ) {
+    WAITING("배송 준비"),
+    COMPLETE("배송 완료"),
+}

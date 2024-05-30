@@ -32,7 +32,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = Color.Black,
     tertiary = Color.White,
     onBackground = PastelGreen,
-    background = PastelGreen.copy(alpha = 0.6f),
+    background = PastelGreenSecond,//PastelGreen.copy(alpha = 0.6f),
     surface = Color.White,
     onSurface = PastelGreenLight,
     onSecondaryContainer = PastelGreenLight

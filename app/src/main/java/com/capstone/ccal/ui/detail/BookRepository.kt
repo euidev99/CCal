@@ -7,6 +7,7 @@ import com.capstone.ccal.common.AppConst
 import com.capstone.ccal.common.BaseRepository
 import com.capstone.ccal.common.FirebaseStorageUtils
 import com.capstone.ccal.common.RepoResult
+import com.capstone.ccal.model.AuthorDto
 import com.capstone.ccal.model.BookCategoryResponse
 import com.capstone.ccal.model.BookCollectionResponse
 import com.capstone.ccal.model.BookDetailItem
@@ -38,9 +39,17 @@ class BookRepository {
                         updatedList.add(firebaseUrl)
                     }
 
+                    val updatedAuthorList = mutableListOf<AuthorDto>()
+                    for (author in data[0].authorList) {
+                        val firebaseUrl = FirebaseStorageUtils.getImageUrl(author.imageUrl)
+
+                        updatedAuthorList.add(author.copy(imageUrl = firebaseUrl))
+                    }
+
                     _bookDetailRes.value = data[0].copy(
                         bookImageUrl = firebaseImageUrl,
-                        bookImageList = updatedList
+                        bookImageList = updatedList,
+                        authorList = updatedAuthorList
                     )
                 }
             }

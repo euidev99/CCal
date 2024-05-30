@@ -10,6 +10,7 @@ import com.capstone.ccal.CalApplication
 import com.capstone.ccal.R
 import com.capstone.ccal.common.AppConst
 import com.capstone.ccal.common.BaseRepository
+import com.capstone.ccal.common.FirebaseStorageUtils
 import com.capstone.ccal.common.RepoResult
 import com.capstone.ccal.model.BookCollectionResponse
 import com.capstone.ccal.model.BookDetailItem
@@ -82,7 +83,13 @@ class SearchRepo {
             is RepoResult.Success -> {
                 Log.d("seki", ">>get Search RepoResult.Success: keyword : $keyword")
 
-                val data = BookSearchResponse(result.data)
+                val updatedList = mutableListOf<BookDetailItem>()
+                for (item in result.data) {
+                    val firebaseUrl = FirebaseStorageUtils.getImageUrl(item.bookImageUrl)
+                    updatedList.add(item.copy(bookImageUrl = firebaseUrl))
+                }
+
+                val data = BookSearchResponse(updatedList)
                 _bookListResponse.value = data
                 setErrorMessage(SearchResult.SUCCESS.message)
             }

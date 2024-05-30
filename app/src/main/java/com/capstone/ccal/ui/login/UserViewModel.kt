@@ -66,6 +66,19 @@ class UserViewModel : ViewModel() {
     fun logIn(email: String, passwd: String) {
         _loadingProgressState.postValue(true)
 
+        //입력 없을 때
+        if (email.isEmpty()) {
+            viewModelScope.launch {
+                setErrorMessage("이메일을 입력해주세요")
+            }
+            return
+        }
+        if (passwd.isEmpty()) {
+            viewModelScope.launch {
+                setErrorMessage("비밀번호를 입력해주세요")
+            }
+            return
+        }
         mAuth.signInWithEmailAndPassword(email, passwd)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

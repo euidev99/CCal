@@ -140,7 +140,7 @@ fun Feed(
         }
 
         val scroll = rememberScrollState(initial = 0)
-        var selectedCategoryIndex by remember { mutableIntStateOf(-1) }
+        var selectedCategoryIndex by remember { mutableIntStateOf(0) }
 
         Feed(
             scroll = scroll,
@@ -176,18 +176,6 @@ private fun Feed(
             .background(
                 MaterialTheme.colorScheme.background
             )
-//            .drawBehind {
-//                repeat(15) {
-//                    val x = Random()
-//                        .nextInt(size.width.toInt())
-//                        .toFloat()
-//                    val y = Random()
-//                        .nextInt(size.height.toInt())
-//                        .toFloat()
-//                    val radius = Random().nextFloat() * 200f
-//                    drawCircle(Color.White, radius, Offset(x, y))
-//                }
-//            },
     ) {
 
         Title(
@@ -218,6 +206,7 @@ private fun Feed(
             }
         } else {
             FeedCollections(
+                selectedCategory = categoryCollection?.get(selectedCategoryIndex)?.category,
                 feedCollections = feedCollection,
                 onDetailClick = onDetailClick,
                 scroll = scroll,
@@ -262,6 +251,7 @@ private fun Title(
 
 @Composable
 private fun FeedCollections(
+    selectedCategory: String?,
     feedCollections: List<BookTypeCollection>,
     onDetailClick: (String) -> Unit,
     scroll: ScrollState,
@@ -271,8 +261,10 @@ private fun FeedCollections(
     val maxOffset = with(LocalDensity.current) { 96.dp.toPx() }
     val minOffset = with(LocalDensity.current) { 40.dp.toPx() }
 
+
     Column(
         modifier
+            .fillMaxSize()
             .verticalScroll(scroll)
             .offset {
                 val scrollValue = scrollProvider()
@@ -286,6 +278,7 @@ private fun FeedCollections(
             when (collection.collectionType) {
                 0 -> {
                     BookCollection(
+                        selectedCategory = selectedCategory,
                         collection = collection,
                         onDetailClick = onDetailClick,
                         index = index,
@@ -294,6 +287,7 @@ private fun FeedCollections(
                 }
                 1 -> {
                     BookPagingCollection(
+                        selectedCategory = selectedCategory,
                         collection = collection,
                         onDetailClick = onDetailClick,
                         index = index,
@@ -317,6 +311,7 @@ private fun FeedCollections(
 
 @Composable
 private fun PromotionSection(
+    selectedCategory: String,
     collection: BookTypeCollection,
     onDetailClick: (String) -> Unit,
     index: Int,
@@ -369,82 +364,88 @@ private fun PromotionSection(
  */
 @Composable
 private fun BookCollection(
+    selectedCategory: String?,
     collection: BookTypeCollection,
     onDetailClick: (String) -> Unit,
     index: Int,
     scrollValue:() -> Int,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = collection.collectionName,
-        fontSize = 20.sp,
-        fontFamily = customFont,
-        fontStyle = FontStyle.Normal,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(
-            horizontal = 12.dp,
-            vertical = 12.dp
-        )
-    )
+    if (selectedCategory == null || selectedCategory == "ALL" || selectedCategory == collection.collectionName) {
 
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(start = 12.dp, end = 12.dp),
-    ) {
-        itemsIndexed(collection.itemList) { index, item ->
-            Column {
-                BookItemVertical(
-                    item = item,
-                    onClick = {
-                        onDetailClick(item.bookId)
-                        Log.d("seki", "Collection item Clicked ${item.bookId}")
-                    })
+        Text(
+            text = collection.collectionName,
+            fontSize = 20.sp,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = modifier.padding(
+                horizontal = 12.dp,
+                vertical = 12.dp
+            )
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp),
+        ) {
+            itemsIndexed(collection.itemList) { index, item ->
+                Column {
+                    BookItemVertical(
+                        item = item,
+                        onClick = {
+                            onDetailClick(item.bookId)
+                            Log.d("seki", "Collection item Clicked ${item.bookId}")
+                        })
+                }
             }
         }
-    }
 
-    DotHorizontalDivider(index)
+        DotHorizontalDivider(index)
+    }
 }
 
 @Composable
 private fun BookPagingCollection(
+    selectedCategory: String?,
     collection: BookTypeCollection,
     onDetailClick: (String) -> Unit,
     index: Int,
     scrollValue:() -> Int,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = collection.collectionName,
-        fontSize = 20.sp,
-        fontFamily = customFont,
-        fontStyle = FontStyle.Normal,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,//MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(
-            horizontal = 12.dp,
-            vertical = 12.dp
+    if (selectedCategory == null || selectedCategory == "ALL" || selectedCategory == collection.collectionName) {
+        Text(
+            text = collection.collectionName,
+            fontSize = 20.sp,
+            fontFamily = customFont,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,//MaterialTheme.colorScheme.primary,
+            modifier = modifier.padding(
+                horizontal = 12.dp,
+                vertical = 12.dp
+            )
         )
-    )
 
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(start = 12.dp, end = 12.dp),
-    ) {
-        itemsIndexed(collection.itemList) { index, item ->
-            Column {
-                PagingBookItem(
-                    item = item,
-                    onClick = {
-                        onDetailClick(item.bookId)
-                        Log.d("seki", "Collection item Clicked ${item.bookId}")
-                    })
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp),
+        ) {
+            itemsIndexed(collection.itemList) { index, item ->
+                Column {
+                    PagingBookItem(
+                        item = item,
+                        onClick = {
+                            onDetailClick(item.bookId)
+                            Log.d("seki", "Collection item Clicked ${item.bookId}")
+                        })
+                }
             }
         }
+        DotHorizontalDivider(index)
     }
-
-    DotHorizontalDivider(index)
 }
 
 

@@ -8,4 +8,5 @@ object MainDestination {
     const val DETAIL_COMPARE = "detail_compare"
     const val LOGIN = "login"
     const val REGISTER = "register"
+    const val SHOPPING_CART = "shopping_cart"
 }

@@ -26,7 +26,6 @@ class FeedViewModel(
         }
     }
 
-
     companion object {
         fun provideFactory(
             feedRepository: FeedRepo

@@ -310,7 +310,7 @@ private fun Body(
             Spacer(Modifier.height(GradientScroll))
             Surface(modifier.fillMaxWidth()) {
                 Column(
-                    modifier = modifier.background(MaterialTheme.colorScheme.background)
+                    modifier = modifier.background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
                 ) {
                     Spacer(Modifier.height(ImageOverlap))
                     Spacer(Modifier.height(TitleHeight))
@@ -445,10 +445,6 @@ private fun BookListCollection(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(items = bookItemsUrl, key =  { imageUrl -> imageUrl }) { imageUrl ->
-//                if (imageUrl.isNotEmpty()) {
-
-                    Log.d("aaa", "start")
-
                     BookImageRound(
                         imageUrl = imageUrl,
                         contentDescription = null,
@@ -500,7 +496,7 @@ private fun Title(book: BookDetailItem, scrollProvider: () -> Int) {
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = formatPrice(book.price),
+            text = (book.price.toString() + " 포인트"),
             fontFamily = customFont,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Normal,

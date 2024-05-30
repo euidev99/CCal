@@ -1,6 +1,8 @@
 package com.capstone.ccal.ui.search
 
 import android.icu.text.CaseMap.Title
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -60,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.capstone.ccal.CalApplication
 import com.capstone.ccal.R
 import com.capstone.ccal.model.BookDetailItem
 import com.capstone.ccal.ui.component.AlertSnackBar
@@ -69,7 +72,9 @@ import com.capstone.ccal.ui.component.HorizontalItemDivider
 import com.capstone.ccal.ui.component.ProgressWithText
 import com.capstone.ccal.ui.home.HomeSections
 import com.capstone.ccal.ui.home.MainBottomBar
+import com.capstone.ccal.ui.navigation.MainDestination
 import com.capstone.ccal.ui.theme.customFont
+import kotlin.system.exitProcess
 
 
 private val titleHeight = 48.dp

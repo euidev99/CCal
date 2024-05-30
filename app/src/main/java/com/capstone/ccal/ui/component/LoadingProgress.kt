@@ -38,7 +38,7 @@ fun ProgressWithText(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .zIndex(1f)
             .background(Color.Black.copy(alpha = 0.5f))
             .fillMaxSize()

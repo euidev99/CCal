@@ -20,6 +20,7 @@
     <string name="login_login">로그인</string>
     <string name="login_id">아이디</string>
     <string name="login_email">이메일</string>
+    <string name="login_nickname">닉네임</string>
     <string name="login_no_register">등록되어 있지 않은 회원입니다.\n다시 확인하여주세요.</string>
     <string name="login_email_hint">www.메일@email.com</string>
     <string name="login_pass_hint">비밀번호</string>
@@ -93,6 +94,12 @@
     <string name="detail_loading">책을 꺼내오는 중입니다</string>
     <!-- 디테일 관련 END -->
 
+    <!-- 앱 정보 팝업 STR -->
+    <string name="app_info_popup_title">앱 부가 정보</string>
+    <string name="app_info_popup_copyrights">앱 저작권</string>
+    <string name="app_info_maker">제작자</string>
+    <string name="app_info_description">이 앱은, 2024 한성대학교 캡스톤 디자인 깔깔깔 팀에서 제작한 어플입니다.\n\n 마켓 플레이스의 기능을 담당하고 있습니다. \n소중한 팀원들과 함께하여 즐거운 시간이었습니다. \n정말 감사합니다.</string>
+    <!-- 앱 정보 팝업 END -->
 
     <!-- 검색 관련 STR -->
     <string name="search_main_title">검색</string>
@@ -117,6 +124,8 @@
     <string name="detail_shopping_phone">연락처</string>
     <string name="detail_shopping_phone_hint">숫자만 입력</string>
     <string name="detail_shopping_memo">배달 메모</string>
+    <string name="detail_shopping_memo_hint">배달 메모를 남겨주세요.</string>
+    <string name="detail_shopping_name">수취인</string>
     <string name="detail_shopping_description">배달은 평균 2~3일 정도 걸릴 수 있습니다.</string>
     <string name="detail_shopping_purchase">구매 확인</string>
     <string name="detail_shopping_complete">구매 완료</string>

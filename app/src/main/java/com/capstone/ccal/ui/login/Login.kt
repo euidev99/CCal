@@ -340,8 +340,8 @@ private fun Body(
                 ) {
                     LoginButton(
                         onClick = {
-//                            viewModel.logIn(emailInputText, passwordInputText)
-                            onNavigateToRoute(HomeSections.FEED.route, false)
+                            viewModel.logIn(emailInputText, passwordInputText)
+//                            onNavigateToRoute(HomeSections.FEED.route, false)
                         }
                     )
 

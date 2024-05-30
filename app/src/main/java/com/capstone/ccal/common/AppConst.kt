@@ -20,7 +20,7 @@ interface AppConst {
             const val BOOK_DETAIL = "BookDetail"
             const val BOOK_CATEGORY = "Category"
             const val USER_INFO = "UserInfo"
-
+            const val ORDER = "Order"
         }
     }
 
